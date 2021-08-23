@@ -181,7 +181,7 @@ class MirrorListener(listeners.MirrorListeners):
             else:
                 uname = f'<a href="tg://user?id={self.message.from_user.id}">{self.message.from_user.first_name}</a>'
             if uname is not None:
-                msg += f'\n\ncc: {uname}'
+                msg += f'\n\n<b>👤 User : </b>👉 {uname}\n\n✅ #Uploaded To AWS Drive ✅ \n\n⛔ 𝘿𝙤 𝙣𝙤𝙩 𝙨𝙝𝙖𝙧𝙚 𝙄𝙣𝙙𝙚𝙭 𝙇𝙞𝙣𝙠 🙂\n\n <b>✥════ @Mani5GRockers ════✥</b>'
             try:
                 fs_utils.clean_download(download_dict[self.uid].path())
             except FileNotFoundError:
@@ -268,7 +268,7 @@ def _mirror(bot, update, isTar=False, extract=False):
     else:
         tag = None
     if not bot_utils.is_url(link) and not bot_utils.is_magnet(link):
-        sendMessage('❌ 𝙳𝚘𝚗'𝚝 𝚂𝚙𝚊𝚖 𝚙𝚕𝚎𝚊𝚜𝚎 😐\n\n👉 𝙸𝚏 𝚢𝚘𝚞 𝚍𝚘𝚗'𝚝 𝚔𝚗𝚘𝚠 💁‍♀️ 𝐇𝐎𝐖 𝐓𝐎 𝐌𝐈𝐑𝐑𝐎𝐑 ?\n\n📖 Read Document 📖\n\n 👉 https://awslink.in/awsmirrorhelp', bot, update)
+        sendMessage('No download source provided', bot, update)
         return
 
     try:
