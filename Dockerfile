@@ -1,20 +1,27 @@
-# Base Image
-FROM ghcr.io/iamliquidx/mirrorx
+FROM iamliquidx/megasdk:latest
 
-# Home Dir
-WORKDIR /app/
+WORKDIR /usr/src/app
+RUN chmod 777 /usr/src/app
 
-# Mirror Bot files and requirements
+RUN apt-get -qq update && \
+    apt-get install -y software-properties-common && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-add-repository non-free && \
+    apt-get -qq update && \
+    apt-get -qq install -y p7zip-full p7zip-rar aria2 curl pv jq ffmpeg locales python3-lxml && \
+    apt-get purge -y software-properties-common
+
+COPY requirements.txt .
+COPY extract /usr/local/bin
+COPY pextract /usr/local/bin
+RUN chmod +x /usr/local/bin/extract && chmod +x /usr/local/bin/pextract
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 COPY . .
-RUN mv extract /usr/local/bin && \
-    mv pextract /usr/local/bin && \
-    chmod +x /usr/local/bin/extract && \
-    chmod +x /usr/local/bin/pextract && \
-    wget -q https://github.com/mani66660/aria2.conf/raw/master/dht.dat -O /app/dht.dat && \
-    wget -q https://github.com/mani66660/aria2.conf/raw/master/dht6.dat -O /app/dht6.dat && \
-    mkdir -p /root/ && \
-    mv netrc /root/.netrc && \
-    pip3 -q install --no-cache-dir -r requirements.txt
+COPY netrc /root/.netrc
+RUN chmod +x aria.sh
 
-# Script Which Starts the Bot
-CMD ["bash", "start.sh"]
+CMD ["bash","start.sh"]
