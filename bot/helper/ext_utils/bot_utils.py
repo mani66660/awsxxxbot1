@@ -14,17 +14,17 @@ URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 
 
 class MirrorStatus:
-    STATUS_UPLOADING = "Uploading...⏫"
-    STATUS_DOWNLOADING = "Downloading...⏬"
-    STATUS_WAITING = "Queued...📝"
-    STATUS_FAILED = "Failed 🚫. Cleaning download"
-    STATUS_CANCELLED = "Cancelled ❎"
-    STATUS_ARCHIVING = "Archiving...🔐"
-    STATUS_EXTRACTING = "Extracting...📂"
+    STATUS_UPLOADING = "𝗨𝗽𝗹𝗼𝗮𝗱𝗶𝗻𝗚...📤"
+    STATUS_DOWNLOADING = "𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗶𝗻𝗚...📥"
+    STATUS_WAITING = "𝗤𝘂𝗲𝘂𝗲𝗱...📝"
+    STATUS_FAILED = "𝗙𝗮𝗶𝗹𝗲𝗱 🚫! 𝗖𝗹𝗲𝗮𝗻𝗶𝗻𝗴 𝗱𝗼𝘄𝗻𝗹𝗼𝗮𝗱..."
+    STATUS_CANCELLED = "𝗖𝗮𝗻𝗰𝗲𝗹𝗹𝗲𝗱 ❎! 𝗖𝗹𝗲𝗮𝗻𝗶𝗻𝗴 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱..."
+    STATUS_ARCHIVING = "𝗔𝗿𝗰𝗵𝗶𝘃𝗶𝗻𝗴...🔐"
+    STATUS_EXTRACTING = "𝗘𝘅𝘁𝗿𝗮𝗰𝘁𝗶𝗻𝗴...📂"
 
 
 PROGRESS_MAX_SIZE = 100 // 8
-PROGRESS_INCOMPLETE = ['▓', '▓', '▓', '▓', '▓', '▓', '▓']
+PROGRESS_INCOMPLETE = ['🟩', '🟩', '🟩', '🟩', '🟩', '🟩', '🟩']
 
 SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
@@ -64,7 +64,7 @@ def getDownloadByGid(gid):
     with download_dict_lock:
         for dl in download_dict.values():
             status = dl.status()
-            if status != MirrorStatus.STATUS_UPLOADING and status != MirrorStatus.STATUS_ARCHIVING\
+            if status != MirrorStatus.STATUS_UPLOADING and status != MirrorStatus.STATUS_ARCHIVING \
                     and status != MirrorStatus.STATUS_EXTRACTING:
                 if dl.gid() == gid:
                     return dl
@@ -81,36 +81,36 @@ def get_progress_bar_string(status):
     p = min(max(p, 0), 100)
     cFull = p // 8
     cPart = p % 8 - 1
-    p_str = '▓' * cFull
+    p_str = '🟩' * cFull
     if cPart >= 0:
         p_str += PROGRESS_INCOMPLETE[cPart]
-    p_str += '░' * (PROGRESS_MAX_SIZE - cFull)
+    p_str += '🟨' * (PROGRESS_MAX_SIZE - cFull)
     p_str = f"[{p_str}]"
     return p_str
 
 
 def get_readable_message():
     with download_dict_lock:
-        msg = ""
+        msg = "\n✥═══ @Mani5GRockers ═══✥\n\n"
         for download in list(download_dict.values()):
-            msg += f"<b>📂Filename :</b> <code>{download.name()}</code>"
-            msg += f"\n<b>Status :</b> <i>{download.status()}</i>"
+            msg += f"<b>🗂 𝗙𝗶𝗹𝗲𝗡𝗮𝗺𝗲 :</b> <code>{download.name()}</code>"
+            msg += f"\n<b>🚦 𝐒𝐭𝐚𝐭𝐮𝐬 :</b> <i>{download.status()}</i>"
             if download.status() != MirrorStatus.STATUS_ARCHIVING and download.status() != MirrorStatus.STATUS_EXTRACTING:
-                msg += f"\n<code>{get_progress_bar_string(download)} {download.progress()}</code>"
+                msg += f"\n<code>{get_progress_bar_string(download)} 〘{download.progress()}〙</code>"
                 if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                    msg += f"\n<b>Downloaded :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
+                    msg += f"\n<b>📥 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐝 :</b> 〘{get_readable_file_size(download.processed_bytes())} of {download.size()}〙"
                 else:
-                    msg += f"\n<b>Uploaded :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
-                msg += f"\n<b>Speed ⚡️:</b> {download.speed()}, \n<b>ETA ⏳:- </b> {download.eta()} "
+                    msg += f"\n<b>📤 𝐔𝐩𝐥𝐨𝐚𝐝𝐞𝐝 :</b> 〘{get_readable_file_size(download.processed_bytes())} of {download.size()}〙"
+                msg += f"\n<b>🚀 𝐒𝐩𝐞𝐞𝐝 :</b> 〘{download.speed()}〙 \n<b>⏳ 𝐄𝐓𝐀 : </b> 〘{download.eta()}〙 "
                 # if hasattr(download, 'is_torrent'):
                 try:
-                    msg += f"\n<b>Info ⚓️ :- Seeders:</b> {download.aria_download().num_seeders}" \
-                        f" & <b>Peers :</b> {download.aria_download().connections}"
+                    msg += f"\n<b>👤 𝐒𝐞𝐞𝐝𝐞𝐫𝐬:</b> 〘{download.aria_download().num_seeders}〙" \
+                        f" <b> 🔄 𝐏𝐞𝐞𝐫𝐬 :</b> 〘{download.aria_download().connections}〙"
                 except:
                     pass
             if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                msg += f"\n<b>To Stop 👉 :</b> <code>/{BotCommands.CancelMirror} {download.gid()}</code>"                 
-            msg += "\n\n"
+                msg += f"\n<b>🚫 𝐓𝐨 𝐒𝐭𝐨𝐩 👉 : </b> <code>/{BotCommands.CancelMirror} {download.gid()}</code>"                 
+            msg += "\n\n✥═══ @Mani5GRockers ═══✥\n\n"
         return msg
 
 
